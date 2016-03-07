@@ -43,24 +43,12 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      
      // Process the opponent's move: calculate the new score
      // score = # our tiles - # their tiles
-     int score = 0;
-     for (int i = 0; i < 8; i++)
+     int flip = 1;
+     if (our_side == WHITE)
      {
-		 for (int j = 0; j < 8; j++)
-		 {
-			 if (board.occupied(i, j))
-			 {
-				 if (board.get(i, j, our_side)
-				 {
-					 score++;
-				 }
-				 else
-				 {
-					 score--;
-				 }
-			 }
-		 }
+		 flip = -1;
 	 }
+     int score = flip * (board.countBlack() - board.countWhite());
      
     return NULL;
 }
