@@ -39,16 +39,63 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     /* 
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
-     */ 
-     
-     // Process the opponent's move: calculate the new score
-     // score = # our tiles - # their tiles
-     int flip = 1;
-     if (our_side == WHITE)
-     {
-		 flip = -1;
-	 }
-     int score = flip * (board.countBlack() - board.countWhite());
-     
+     */
+    
+    /** Rough Outline:
+     * Accept opponent's move
+     * Update board
+     * 
+     * vector<Move> moveList;
+     * vector<int> moveScores;
+     * vector<Move> opponentMoveList;
+     * 
+     * // Get list of all possible player moves:
+     * if board has legal moves:
+     *     moveList = all possible moves based on updated board
+     *                (for each square, check if legal move)
+     * 
+     * // Iterate through moves and init minimum score for each player move
+     * tempboard = board.copy
+     * for each move in moveList:
+     *     change tempboard based on move
+     *     moveScores.push_back(100) // initialize score of this player move to 100
+     *     if tempboard has legal moves:
+     *         opponentMoveList = all possible moves based on updated board
+     *         for each move in opponentMoveList:
+     *             calculate score
+     *             if score < moveScores.pop() // if less than current score of this player move
+     *                 moveScores.pop()
+     *                 moveScores.push_back(score)
+     *             }
+     *         }
+     *         // thus assigns a score to each player move that is the lowest
+     *         // score of all possible subsequent opponent moves
+     *     }
+     * }
+     * 
+     * // Find which move had the highest minScore
+     * minimaxScore = moveScores[0];
+     * minimaxScoreIndex = 0;
+     * iterate through rest of moveScores
+     *    if score > minimaxScore:
+     *       minimaxScore = score;
+     *       minimaxScoreIndex = i; // i being current index in moveScores
+     * 
+     * return moveScores[i] // Returns player move that had highest minScore
+     * 
+     */
+    
+    
+    /** TODO: Accept opponentsMove and update board */
+    
+    // Calculate opponent's score
+    // score = # our tiles - # their tiles
+    int flip = 1;
+    if (our_side == WHITE)
+    {
+		flip = -1;
+	}
+    int score = flip * (board.countBlack() - board.countWhite());
+    
     return NULL;
 }
