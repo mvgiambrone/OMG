@@ -7,6 +7,7 @@
  */
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
+    our_side = side;
     testingMinimax = false;
 
     /* 
@@ -39,5 +40,27 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */ 
+     
+     // Process the opponent's move: calculate the new score
+     // score = # our tiles - # their tiles
+     int score = 0;
+     for (int i = 0; i < 8; i++)
+     {
+		 for (int j = 0; j < 8; j++)
+		 {
+			 if (board.occupied(i, j))
+			 {
+				 if (board.get(i, j, our_side)
+				 {
+					 score++;
+				 }
+				 else
+				 {
+					 score--;
+				 }
+			 }
+		 }
+	 }
+     
     return NULL;
 }
