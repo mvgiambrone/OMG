@@ -6,6 +6,7 @@
  */
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
+    testingMinimax = false;
     our_side = side;
     //cerr << "Our side is: " << our_side << endl;
     if (our_side == WHITE)
@@ -16,16 +17,10 @@ Player::Player(Side side) {
     {
         their_side = WHITE;
     }
-    testingMinimax = false;
+    
     //cerr << "Initializing board" << endl;
     
     board = Board();
-    
-    /* 
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
 }
 
 /*
@@ -47,60 +42,6 @@ Player::~Player() {
  * return NULL.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-    /* 
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */
-    
-    /** Rough Outline:
-     * Accept opponent's move
-     * Update board
-     * 
-     * int minscore;
-     * int tempscore;
-     * vector<Move> moveList;
-     * vector<int> moveScores;
-     * vector<Move> opponentMoveList;
-     * 
-     * // Get list of all possible player moves:
-     * if board has legal moves:
-     *     moveList = all possible moves based on updated board
-     *                (for each square, check if legal move)
-     * 
-     * // Iterate through moves and init minimum score for each player move
-     * tempboard = board.copy
-     * for each move in moveList:
-     *     change tempboard based on move
-     *     if tempboard has legal moves:
-     *         minscore = 100 // initialize score of this player move to 100
-     *         opponentMoveList = all possible moves based on updated board
-     *         for each move in opponentMoveList:
-     *             tempscore = calculated score
-     *             if tempscore < minscore // if less than current score of this player move
-     *                 minscore = tempscore;
-     *             }
-     *         }
-     *         moveScores.push_back(minscore)
-     *         // thus assigns a score to each player move that is the lowest
-     *         // score of all possible subsequent opponent moves
-     *     }
-     * }
-     * 
-     * // Find which move had the highest minScore
-     * minimaxScore = moveScores[0];
-     * minimaxScoreIndex = 0;
-     * iterate through rest of moveScores
-     *    if score > minimaxScore:
-     *       minimaxScore = score;
-     *       minimaxScoreIndex = i; // i being current index in moveScores
-     * 
-     * return moveList[i] // Returns player move that had highest minScore
-     * 
-     */
-    
-    
-    /** TODO: Accept opponentsMove and update board */
-    
     board.doMove(opponentsMove, their_side);
     // Calculate opponent's score
     // score = # our tiles - # their tiles
@@ -188,11 +129,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             opponentMoveList = findMoves(tempBoard, their_side);
             /** Go through possible subsequent opponent moves and get minimum score */
             for (unsigned j=0; j < opponentMoveList.size(); j++) {
-                /**
-                Calculate score of tempBoard based on potential opponent move
-                tempScore = tempBoard->count(our_side) - tempBoard->count(their_side);
-                */
-                tempScore = getScore(tempBoard, our_side, their_side, moveList[j]->x, moveList[j]->y);
+				tempScore = getScore(tempBoard, their_side, our_side, opponentMoveList[j]->x, opponentMoveList[j]->y);
                 /** Update minimum score for this particular player move if less than
                     previously calculated minScore for the move */
                 if (tempScore < minScore) {
@@ -274,4 +211,9 @@ vector<Move *> Player::findMoves(Board * aboard, Side side)
         }
     }
     return moveList;
+}
+
+void Player::setBoard(char data[])
+{
+	board.setBoard(data);
 }

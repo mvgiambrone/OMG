@@ -23,6 +23,7 @@ public:
     void deleteMoves(vector<Move *> moves);
     int getScore(Board * b, Side us, Side them, int i, int j);
     vector<Move *> findMoves(Board *aboard, Side side);
+    void setBoard(char data[]);
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
