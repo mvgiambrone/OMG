@@ -11,6 +11,7 @@ class Player {
 private:
 	Board board;
 	Side our_side;
+	Side their_side;
 
 public:
     Player(Side side);

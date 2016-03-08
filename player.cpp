@@ -1,5 +1,5 @@
 #include "player.h"
-
+#include <iostream>
 /*
  * Constructor for the player; initialize everything here. The side your AI is
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish 
@@ -8,8 +8,20 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     our_side = side;
+    cerr << "Our side is: " << our_side << endl;
+    if (our_side == WHITE)
+    {
+        their_side = BLACK;
+    }
+    else
+    {
+        their_side = WHITE;
+    }
     testingMinimax = false;
-
+    cerr << "Initializing board" << endl;
+    
+    board = Board();
+    
     /* 
      * TODO: Do any initialization you need to do here (setting up the board,
      * precalculating things, etc.) However, remember that you will only have
@@ -45,6 +57,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * Accept opponent's move
      * Update board
      * 
+     * int minscore;
+     * int tempscore;
      * vector<Move> moveList;
      * vector<int> moveScores;
      * vector<Move> opponentMoveList;
@@ -58,16 +72,16 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * tempboard = board.copy
      * for each move in moveList:
      *     change tempboard based on move
-     *     moveScores.push_back(100) // initialize score of this player move to 100
      *     if tempboard has legal moves:
+     *         minscore = 100 // initialize score of this player move to 100
      *         opponentMoveList = all possible moves based on updated board
      *         for each move in opponentMoveList:
-     *             calculate score
-     *             if score < moveScores.pop() // if less than current score of this player move
-     *                 moveScores.pop()
-     *                 moveScores.push_back(score)
+     *             tempscore = calculated score
+     *             if tempscore < minscore // if less than current score of this player move
+     *                 minscore = tempscore;
      *             }
      *         }
+     *         moveScores.push_back(minscore)
      *         // thus assigns a score to each player move that is the lowest
      *         // score of all possible subsequent opponent moves
      *     }
@@ -88,14 +102,28 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     
     /** TODO: Accept opponentsMove and update board */
     
+    board.doMove(opponentsMove, their_side);
     // Calculate opponent's score
     // score = # our tiles - # their tiles
-    int flip = 1;
-    if (our_side == WHITE)
+    int score = board.count(our_side) - board.count(their_side);
+    cerr << "Score of current board" << score << endl;
+
+    // Version 1: Find first valid move and return that
+    for (int i = 0; i < 8; i++)
     {
-		flip = -1;
-	}
-    int score = flip * (board.countBlack() - board.countWhite());
+        for (int j = 0; j < 8; j++)
+        {
+            Move * m = new Move(i, j);
+            if (board.checkMove(m, our_side))
+            {
+                cerr << "First move found = (" << i << ", " << j << ")" << endl;
+                board.doMove(m, our_side);
+                return m;
+            }
+            delete m;
+        }
+    }
+    
     
     return NULL;
 }
