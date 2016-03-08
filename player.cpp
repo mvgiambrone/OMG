@@ -1,5 +1,5 @@
 #include "player.h"
-#include <iostream>
+#include <vector>
 /*
  * Constructor for the player; initialize everything here. The side your AI is
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish 
@@ -8,7 +8,7 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     our_side = side;
-    cerr << "Our side is: " << our_side << endl;
+    //cerr << "Our side is: " << our_side << endl;
     if (our_side == WHITE)
     {
         their_side = BLACK;
@@ -18,7 +18,7 @@ Player::Player(Side side) {
         their_side = WHITE;
     }
     testingMinimax = false;
-    cerr << "Initializing board" << endl;
+    //cerr << "Initializing board" << endl;
     
     board = Board();
     
@@ -95,7 +95,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      *       minimaxScore = score;
      *       minimaxScoreIndex = i; // i being current index in moveScores
      * 
-     * return moveScores[i] // Returns player move that had highest minScore
+     * return moveList[i] // Returns player move that had highest minScore
      * 
      */
     
@@ -106,8 +106,9 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     // Calculate opponent's score
     // score = # our tiles - # their tiles
     int score = board.count(our_side) - board.count(their_side);
-    cerr << "Score of current board" << score << endl;
+   // cerr << "Score of current board" << score << endl;
 
+/**
     // Version 1: Find first valid move and return that
     for (int i = 0; i < 8; i++)
     {
@@ -123,7 +124,86 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             delete m;
         }
     }
+   **/
+
+/**    vector<Move> moveList;
+    vector<int> moveScores;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            Move * m = new Move(i, j);
+            if (board.checkMove(m, our_side))
+            {
+                cerr << "Move found: " << m->x << ", " << m->y << endl;
+                Board * testBoard = board.copy();
+                testBoard->doMove(m, our_side);
+                moveList.push_back(*m);
+                moveScores.push_back(testBoard->count(our_side) - testBoard->count(their_side));
+                delete testBoard;
+            }
+        }
+    }
+    int maxScoreIndex = 0;
+    for (unsigned int i = 1; i  < moveList.size(); i++)
+    {
+        if (moveScores[i] > moveScores[maxScoreIndex])
+        {
+            maxScoreIndex = i;
+        }
+    }
+    Move * best_move = &moveList[maxScoreIndex];
+    cerr << "Best move found: (" << best_move->x << ", " << best_move->y << "), with score = " << moveScores[maxScoreIndex] << endl;
+    board.doMove(best_move, our_side);
+    return best_move;
+    **/
+    // ^^^ this was a really inefficient attempt at version 2 ^^^
     
     
-    return NULL;
+    // Version 2: Find all valid moves, compare those scores
+    if (!board.hasMoves(our_side))
+    {
+        return NULL;
+    }
+    
+    int maxScore = score;
+    Move * best_move = NULL;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            Move * m = new Move(i, j);
+            if (board.checkMove(m, our_side))
+            {
+                //cerr << "Move found: " << m->x << ", " << m->y << endl;
+                Board * testBoard = board.copy();
+                testBoard->doMove(m, our_side);
+                int newScore = testBoard->count(our_side) - testBoard->count(their_side);
+                if ((i == 0 && j == 0) || (i == 7 && j == 0) || (i == 0 && j == 7) || (i == 7 && j == 7))
+                {
+                    newScore *= 5;
+                }
+                else if ((i == 1 && j == 1) || (i == 1 && j == 6) || (i == 6 && j == 1) || (i == 6 && j == 6))
+                {
+                    newScore *= -3;
+                }
+                else if (((i == 0 || i == 7) && (j == 1 || j == 6)) || ((j == 0 || j == 7) && (i == 1 || i == 6)))
+                {
+                    newScore *= 3;
+                }
+                else if ((i == 1 || i == 6) && (j == 1 || j == 6))
+                {
+                    newScore *= -5;
+                }
+                if (best_move == NULL || newScore > maxScore)
+                {
+                    best_move = m;
+                    maxScore = newScore;
+                    //cerr << "This is a better move, new max score = " << maxScore << endl;
+                }
+            }
+        }
+    }    
+    board.doMove(best_move, our_side);
+    return best_move;
 }
