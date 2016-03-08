@@ -73,7 +73,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         return NULL;
     }
     // Keep track of the best move
-    int maxScore = score;
+    int maxScore = board.count(our_side) - board.count(their_side);
     Move * best_move = NULL;
     for (int i = 0; i < 8; i++)
     {
@@ -83,9 +83,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             if (board.checkMove(m, our_side))
             {
                 //cerr << "Move found: " << m->x << ", " << m->y << endl;
-                Board * testBoard = board.copy();
-                testBoard->doMove(m, our_side);
-                int newScore = getScore(testBoard, our_side, their_side, i, j);
+                int newScore = getScore(board.copy(), our_side, their_side, m);
                
                 if (best_move == NULL || newScore > maxScore)
                 {
@@ -104,6 +102,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     board.doMove(best_move, our_side);
     return best_move;
     **/
+    
     // Version 3: Minimax
     int minScore;
     int tempScore;
@@ -129,7 +128,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             opponentMoveList = findMoves(tempBoard, their_side);
             /** Go through possible subsequent opponent moves and get minimum score */
             for (unsigned j=0; j < opponentMoveList.size(); j++) {
-				tempScore = getScore(tempBoard, their_side, our_side, opponentMoveList[j]->x, opponentMoveList[j]->y);
+				tempScore = getScore(tempBoard->copy(), their_side, our_side, opponentMoveList[j]);
+                tempScore *= -1;
                 /** Update minimum score for this particular player move if less than
                     previously calculated minScore for the move */
                 if (tempScore < minScore) {
@@ -169,27 +169,31 @@ void Player::deleteMoves(vector<Move *> moves)
 	}
 }
 
-int Player::getScore(Board * b, Side us, Side them, int i, int j)
+int Player::getScore(Board * b, Side us, Side them, Move * m)
 {
+	b->doMove(m, us);
 	/** Calculate baseline score **/
 	int newScore = b->count(us) - b->count(them);
 	/** Adjust for edge and corner tiles **/
+	int i = m->x;
+	int j = m->y;
 	if ((i == 0 && j == 0) || (i == 7 && j == 0) || (i == 0 && j == 7) || (i == 7 && j == 7))
 	{
-		newScore *= 5;
+		newScore += 50;
 	}
 	else if ((i == 1 && j == 1) || (i == 1 && j == 6) || (i == 6 && j == 1) || (i == 6 && j == 6))
 	{
-		newScore *= -3;
+		newScore -= 50;
 	}
 	else if (((i == 0 || i == 7) && (j == 1 || j == 6)) || ((j == 0 || j == 7) && (i == 1 || i == 6)))
 	{
-		newScore *= 3;
+		newScore -= 25;
 	}
-	else if ((i == 1 || i == 6) && (j == 1 || j == 6))
+	else if (i == 0 || i == 7 || j == 0 || j == 7)
 	{
-		newScore *= -5;
+		newScore += 25;
 	}
+	delete b;
 	return newScore;
 }
 
