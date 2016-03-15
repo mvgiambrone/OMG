@@ -104,8 +104,61 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     **/
     
     // Version 3: Minimax
-    int minScore;
-    int tempScore;
+    //~ int minScore;
+    //~ int tempScore;
+    //~ int minimaxScoreIndex;
+    //~ vector<Move *> moveList;
+    //~ vector<int> moveScores;
+    //~ vector<Move *> opponentMoveList;
+//~ 
+    //~ /** Return NULL if no valid moves on our side */
+    //~ if (!board.hasMoves(our_side)) {
+        //~ return NULL;
+    //~ }
+//~ 
+    //~ /** Populate moveList with all valid moves we can make */
+    //~ moveList = findMoves(&board, our_side);
+    //~ 
+    //~ /** Populate moveScores with minimum score for each player move */
+    //~ for (unsigned i=0; i < moveList.size(); i++) {
+        //~ Board * tempBoard = board.copy();
+        //~ tempBoard->doMove(moveList[i], our_side);
+        //~ minScore = 100;
+        //~ if (tempBoard->hasMoves(their_side)) {
+            //~ opponentMoveList = findMoves(tempBoard, their_side);
+            //~ /** Go through possible subsequent opponent moves and get minimum score */
+            //~ for (unsigned j=0; j < opponentMoveList.size(); j++) {
+				//~ tempScore = getScore(tempBoard->copy(), their_side, our_side, opponentMoveList[j]);
+                //~ tempScore *= -1;
+                //~ /** Update minimum score for this particular player move if less than
+                    //~ previously calculated minScore for the move */
+                //~ if (tempScore < minScore) {
+                    //~ minScore = tempScore;
+                //~ }
+            //~ }
+            //~ /** Free opponentMoveList */
+            //~ deleteMoves(opponentMoveList);
+        //~ }
+        //~ /** Add minimum score of this player move to moveScores */
+        //~ moveScores.push_back(minScore);
+        //~ 
+        //~ delete tempBoard;
+    //~ }
+    //~ 
+    //~ /** Maximize minimum score */
+    //~ minimaxScoreIndex = 0;
+    //~ for (unsigned k=1; k < moveScores.size(); k++) {
+        //~ if (moveScores[k] > moveScores[minimaxScoreIndex]) {
+            //~ minimaxScoreIndex = k;
+        //~ }
+    //~ }
+    //~ 
+    //~ /** Make copy of the best move so that we can free moveList */
+    //~ Move * best_move = new Move(moveList[minimaxScoreIndex]->x, moveList[minimaxScoreIndex]->y);
+    //~ deleteMoves(moveList);
+    
+    //~ int minScore;
+    //~ int tempScore;
     int minimaxScoreIndex;
     vector<Move *> moveList;
     vector<int> moveScores;
@@ -123,22 +176,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     for (unsigned i=0; i < moveList.size(); i++) {
         Board * tempBoard = board.copy();
         tempBoard->doMove(moveList[i], our_side);
-        minScore = 100;
-        if (tempBoard->hasMoves(their_side)) {
-            opponentMoveList = findMoves(tempBoard, their_side);
-            /** Go through possible subsequent opponent moves and get minimum score */
-            for (unsigned j=0; j < opponentMoveList.size(); j++) {
-				tempScore = getScore(tempBoard->copy(), their_side, our_side, opponentMoveList[j]);
-                tempScore *= -1;
-                /** Update minimum score for this particular player move if less than
-                    previously calculated minScore for the move */
-                if (tempScore < minScore) {
-                    minScore = tempScore;
-                }
-            }
-            /** Free opponentMoveList */
-            deleteMoves(opponentMoveList);
-        }
+        int minScore = pvs(tempBoard, 3, -1000, 1000, our_side);
         /** Add minimum score of this player move to moveScores */
         moveScores.push_back(minScore);
         
@@ -224,11 +262,11 @@ void Player::setBoard(char data[])
 
 int Player::pvs(Board * board, int depth, int alpha, int beta, Side color)
 {
-    vector<Move *> movesList = findMoves(board, color);
-    if (movesList.empty())
+    if (board->hasMoves(color) || depth == 0)
     {
         return board->count(color) - board->count(opposite(color));
     }
+    vector<Move *> movesList = findMoves(board, color);
     for (unsigned int i = 0; i < movesList.size(); i++)
     {
 		int score;
