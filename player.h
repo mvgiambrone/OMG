@@ -22,6 +22,8 @@ public:
     Move *doMove(Move *opponentsMove, int msLeft);
     void deleteMoves(vector<Move *> moves);
     int getScore(Board * b, Side us, Side them, Move * m);
+    int pvs(Board * board, int depth, int alpha, int beta, Side color);
+    Side opposite(Side s);
     vector<Move *> findMoves(Board *aboard, Side side);
     void setBoard(char data[]);
 

@@ -221,3 +221,45 @@ void Player::setBoard(char data[])
 {
 	board.setBoard(data);
 }
+
+int Player::pvs(Board * board, int depth, int alpha, int beta, Side color)
+{
+    vector<Move *> movesList = findMoves(board, color);
+    if (movesList.empty())
+    {
+        return board->count(color) - board->count(opposite(color));
+    }
+    for (unsigned int i = 0; i < movesList.size(); i++)
+    {
+		int score;
+        Board * b = board->copy();
+        b->doMove(movesList[i], color);
+        if (i != 0)
+        {
+            int score = -1 * pvs(b, depth - 1, -1*alpha - 1, -1 * alpha, opposite(color));
+            if (alpha < score && score < beta)
+            {
+                score = - 1 * pvs(b, depth-1, -1 * beta, -1 * score, opposite(color));
+            }
+        }
+        else
+        {
+            score = -1 * pvs(b, depth-1, -1 * beta, -1 * alpha, opposite(color));
+        }
+        alpha = max(alpha, score);
+        if (alpha >= beta)
+        {
+            break;
+        }
+    }
+    return alpha;
+}
+
+Side Player::opposite(Side s)
+{
+	if (s == WHITE)
+	{
+		return BLACK;
+	}
+	return WHITE;
+}
