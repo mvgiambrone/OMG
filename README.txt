@@ -1,5 +1,5 @@
 README for Othello Tournament
-by Grace Chen and Mary Giambrone
+by Grace Chen and Mary Giambrone (Team OMG)
 
 
 == Grace Chen ==
@@ -15,7 +15,7 @@ and 2.  Heuristic function, which returns the move with the best score.
 Wrote the scoring function for the minimax algorithm, which returns the score
 of the board after a particular move is made. Also wrote some helper functions
 for player.cpp.
-
+Translated pseudocode outline of PVS (negascout) algorithm into implemented code.
 
 == Improvements ==
 The first major improvement we made was changing our scoring system. We found

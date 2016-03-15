@@ -262,9 +262,192 @@ void Player::setBoard(char data[])
 
 int Player::pvs(Board * board, int depth, int alpha, int beta, Side color)
 {
-    if (board->hasMoves(color) || depth == 0)
+    if (!board->hasMoves(color) || depth == 0)
     {
-        return board->count(color) - board->count(opposite(color));
+		int score = board->count(color) - board->count(opposite(color));
+		int add = 1;
+		if (color == WHITE)
+		{
+			add = -1;
+		}
+		
+		if (board->black[0])
+		{
+			score += add*25;
+		}
+		else if (board->taken[0])
+		{
+			score += add*-25;
+		}
+		if (board->black[7])
+		{
+			score += add*25;
+		}
+		else if (board->taken[7])
+		{
+			score += add*-25;
+		}
+		if (board->black[56])
+		{
+			score += add*25;
+		}
+		else if (board->taken[56])
+		{
+			score += add*-25;
+		}
+		if (board->black[63])
+		{
+			score += add*25;
+		}
+		else if (board->taken[63])
+		{
+			score += add*-25;
+		}
+		for (int i = 2; i < 7; i++)
+		{
+			if (board->black[i])
+			{
+				score += add*10;
+			}
+			else if (board->taken[i])
+			{
+				score += add*-10;
+			}
+		}
+		for (int i = 58; i < 63; i++)
+		{
+			if (board->black[i])
+			{
+				score += add*10;
+			}
+			else if (board->taken[i])
+			{
+				score += add*-10;
+			}
+		}
+		for (int i = 16; i < 48; i += 8)
+		{
+			if (board->black[i])
+			{
+				score += add*10;
+			}
+			else if (board->taken[i])
+			{
+				score += add*-10;
+			}
+		}
+		for (int i = 23; i < 50; i += 8)
+		{
+			if (board->black[i])
+			{
+				score += add*10;
+			}
+			else if (board->taken[i])
+			{
+				score += add*-10;
+			}
+		}
+		if (board->black[1])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[1])
+		{
+			score += add*10;
+		}
+		if (board->black[6])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[6])
+		{
+			score += add*10;
+		}
+		if (board->black[8])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[8])
+		{
+			score += add*10;
+		}
+		if (board->black[15])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[15])
+		{
+			score += add*10;
+		}
+		if (board->black[48])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[48])
+		{
+			score += add*10;
+		}
+		if (board->black[55])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[55])
+		{
+			score += add*10;
+		}
+		if (board->black[57])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[57])
+		{
+			score += add*10;
+		}
+		if (board->black[62])
+		{
+			score += add*-10;
+		}
+		else if (board->taken[62])
+		{
+			score += add*10;
+		}
+		
+		if (board->black[9])
+		{
+			score += add*-25;
+		}
+		else if (board->taken[9])
+		{
+			score += add*25;
+		}
+		if (board->black[14])
+		{
+			score += add*-25;
+		}
+		else if (board->taken[14])
+		{
+			score += add*25;
+		}
+		if (board->black[49])
+		{
+			score += add*-25;
+		}
+		else if (board->taken[49])
+		{
+			score += add*25;
+		}
+		if (board->black[54])
+		{
+			score += add*-25;
+		}
+		else if (board->taken[54])
+		{
+			score += add*25;
+		}
+		
+		
+		
+        return score;
     }
     vector<Move *> movesList = findMoves(board, color);
     for (unsigned int i = 0; i < movesList.size(); i++)
